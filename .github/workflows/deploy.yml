@@ -1,4 +1,4 @@
-name: Deploy Static Site to GitHub Pages
+name: Deploy Static Site Artifact to GitHub Pages
 
 on:
   push:
@@ -9,7 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      # Opt into Node 24 to avoid deprecation warnings causing issues
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
     steps:
@@ -23,21 +22,21 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install streamlit
+        pip install pandas # Only need pandas to format the mock data in app.py
         cd stock_research_bot
-        pip install -r requirements.txt
+        pip install -r requirements.txt # This will install streamlit if pandas needs it, but we don't run streamlit
         cd ..
         
     - name: Generate Static HTML Report
       run: |
+        # Run the python script directly. This creates index.html in the root directory.
         python stock_research_bot/app.py
         
-    - name: Deploy Report to gh-pages branch
+    - name: Deploy Artifacts to gh-pages
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./ # Publish report.html and source files from the root
+        publish_dir: ./ # Deploy the root directory, which now contains the index.html artifact
         force_orphan: true 
         publish_branch: gh-pages 
-        # CRITICAL FIX: Use the explicit PAT instead of the default token for pushing to gh-pages
-        external_token: ${{ secrets.PAT_FOR_GH_PAGES }} 
+        external_token: ${{ secrets.PAT_FOR_GH_PAGES }}
