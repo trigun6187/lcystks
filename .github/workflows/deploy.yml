@@ -18,17 +18,17 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies
+    - name: Install dependencies and Build Static HTML Report
       run: |
+        # Install app dependencies
         cd stock_research_bot
         pip install -r requirements.txt
+        cd .. # Return to root
         
-    - name: Build Static HTML Report
-      # Run Streamlit in a way that generates static HTML files in the root of the working directory
-      run: |
-        pip install 'streamlit>=1.29.0' # Enforce a version known to have a good export feature
+        # Install Streamlit and build to root/output/ directory
+        pip install 'streamlit>=1.29.0'
         python -m streamlit build stock_research_bot/app.py --format html --output output/
-        
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
