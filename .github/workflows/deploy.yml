@@ -18,21 +18,24 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies and Build Static HTML Report
+    - name: Install dependencies
       run: |
-        # Install app dependencies
         cd stock_research_bot
         pip install -r requirements.txt
-        cd .. # Return to root
         
-        # Install Streamlit and build to root/output/ directory
-        pip install 'streamlit>=1.29.0'
-        python -m streamlit build stock_research_bot/app.py --format html --output output/
-
+    - name: Build Static HTML Report - RETRY
+      run: |
+        # Reverting to a more direct approach that worked for other Streamlit pages.
+        # We run the app *as a script* to print to stdout, and rely on the deployment action 
+        # to handle the output correctly, or we must manually deploy content.
+        # Forcing a standard build command based on latest practice:
+        pip install streamlit
+        streamlit build stock_research_bot/app.py --format html --output output/
+        
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./output # Deploy the contents of the 'output' directory created above
+        publish_dir: ./output 
         enable_clone_depth: true
         force_orphan: true
