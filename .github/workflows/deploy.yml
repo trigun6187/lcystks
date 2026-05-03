@@ -1,0 +1,38 @@
+name: Deploy Streamlit App to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd stock_research_bot
+          python -m pip install --upgrade pip
+          # Install packages listed in requirements.txt
+          pip install -r requirements.txt
+
+      # NOTE: For a live Streamlit app, one usually needs a dedicated build step here
+      # (e.g., using stlite or a custom script) to convert the app into static HTML files,
+      # which would then be placed into the publish_dir.
+      # This workflow assumes either the app is already static or the peaceiris action handles necessary file copying/build.
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./stock_research_bot/
+          publish_branch: gh-pages
+          # The action will push the contents of ./stock_research_bot/ to the gh-pages branch.
