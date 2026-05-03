@@ -12,3 +12,18 @@ def get_trending_penny_stocks_research():
         {"ticker": "MOCK1", "price": 2.50, "reason": "Placeholder: High volume spike based on latest news"},
         {"ticker": "MOCK2", "price": 4.99, "reason": "Placeholder: Analyst upgrade"}
     ]
+
+@st.cache_data(ttl=300) # Cache results for 5 minutes (300 seconds)
+def get_live_research_data():
+    # This calls the stub function created in Task 3
+    return get_trending_penny_stocks_research() 
+
+st.header("Latest Watchlist (Mock Data)")
+data = get_live_research_data()
+
+if data:
+    # Convert list of dicts to a Pandas DataFrame for display
+    df = pd.DataFrame(data)
+    st.dataframe(df)
+else:
+    st.warning("Could not retrieve research data.")
