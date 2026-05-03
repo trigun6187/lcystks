@@ -20,16 +20,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd stock_research_bot
-        pip install -r requirements.txt
+        pip install -r stock_research_bot/requirements.txt
+        pip install streamlit # Install streamlit explicitly for the build command
         
-    - name: Build Static HTML Report - RETRY
+    - name: Build Static HTML Report - RETRY 2
+      # Run from the root directory, referencing the app path explicitly
       run: |
-        # Reverting to a more direct approach that worked for other Streamlit pages.
-        # We run the app *as a script* to print to stdout, and rely on the deployment action 
-        # to handle the output correctly, or we must manually deploy content.
-        # Forcing a standard build command based on latest practice:
-        pip install streamlit
         streamlit build stock_research_bot/app.py --format html --output output/
         
     - name: Deploy to GitHub Pages
