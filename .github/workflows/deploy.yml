@@ -23,18 +23,21 @@ jobs:
 
     - name: Install dependencies
       run: |
-        # Install requirements for running the script locally in the runner
-        pip install -r stock_research_bot/requirements.txt
+        pip install streamlit
+        cd stock_research_bot
+        pip install -r requirements.txt
+        cd ..
         
     - name: Generate Static HTML Report
       run: |
-        # Run the python script directly to generate index.html in the project root.
         python stock_research_bot/app.py
         
     - name: Deploy Report to gh-pages branch
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: . # Publish everything from the root (should contain index.html)
+        publish_dir: ./ # Publish report.html and source files from the root
         force_orphan: true 
         publish_branch: gh-pages 
+        # CRITICAL FIX: Use the explicit PAT instead of the default token for pushing to gh-pages
+        external_token: ${{ secrets.PAT_FOR_GH_PAGES }} 
