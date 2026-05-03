@@ -18,12 +18,17 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies
+    - name: Install dependencies - ULTIMATE FIX ATTEMPT
       run: |
-        pip install -r stock_research_bot/requirements.txt
-        pip install streamlit # Install streamlit explicitly for the build command
+        # 1. Install core tools first, at the root level
+        pip install streamlit
         
-    - name: Build Static HTML Report - RETRY 2
+        # 2. Install project dependencies
+        cd stock_research_bot
+        pip install -r requirements.txt
+        cd .. # Return to root
+        
+    - name: Build Static HTML Report - RETRY 3
       # Run from the root directory, referencing the app path explicitly
       run: |
         streamlit build stock_research_bot/app.py --format html --output output/
