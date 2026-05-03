@@ -18,7 +18,7 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies - ULTIMATE FIX ATTEMPT
+    - name: Install dependencies - FINAL FIX ATTEMPT
       run: |
         # 1. Install core tools first, at the root level
         pip install streamlit
@@ -28,10 +28,10 @@ jobs:
         pip install -r requirements.txt
         cd .. # Return to root
         
-    - name: Build Static HTML Report - RETRY 3
-      # Run from the root directory, referencing the app path explicitly
+    - name: Build Static HTML Report - FINAL ATTEMPT
       run: |
-        streamlit build stock_research_bot/app.py --format html --output output/
+        # Execute via python -m to ensure the correct interpreter finds streamlit
+        python -m streamlit build stock_research_bot/app.py --format html --output output/
         
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
