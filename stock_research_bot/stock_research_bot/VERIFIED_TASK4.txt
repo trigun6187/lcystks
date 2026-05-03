@@ -1,1 +1,0 @@
-Dashboard display logic verified: App starts and prints Network URL successfully on timeout.
