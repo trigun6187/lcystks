@@ -22,9 +22,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install pandas # Only need pandas to run the app.py script now
+        pip install pandas
         cd stock_research_bot
-        # Do NOT install streamlit, as we removed the dependency on it
         pip install -r requirements.txt 
         cd ..
         
@@ -33,11 +32,13 @@ jobs:
         # Run the python script directly. This creates index.html in the root directory.
         python stock_research_bot/app.py
         
-    - name: Deploy Artifacts to gh-pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./ # Deploy the root directory, which now contains the index.html artifact
-        force_orphan: true 
-        publish_branch: gh-pages 
-        external_token: ${{ secrets.PAT_FOR_GH_PAGES }}
+    - name: Commit and Deploy Artifacts to gh-pages branch
+      run: |
+        # 1. Add generated files (index.html) and workflow file
+        git config --global user.name "trigun6187"
+        git config --global user.email "trigun6187@users.noreply.github.com"
+        git add .github/workflows/deploy.yml index.html
+        git commit -m "chore(ci): Deploy static HTML artifact via direct git push"
+        
+        # 2. Push to gh-pages branch using the personal PAT configured on master remote
+        git push origin HEAD:gh-pages
