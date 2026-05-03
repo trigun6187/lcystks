@@ -1,4 +1,4 @@
-name: Deploy Static Site to GitHub Pages
+name: Deploy Data Report to GitHub Pages
 
 on:
   push:
@@ -20,17 +20,23 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install streamlit
+        pip install streamlit # Needed for running app.py even if not running as a GUI
         cd stock_research_bot
         pip install -r requirements.txt
         cd ..
         
-    # Skip the failing 'streamlit build' command entirely.
+    - name: Generate Static Report (Test Data Capture)
+      run: |
+        # Run the app as a script; outputting to stdout.
+        # Because the app prints the mock data (list/dict), we capture it and write it to a JSON file.
+        python stock_research_bot/app.py > report.json
         
-    - name: Deploy to GitHub Pages (Fallback: Deploy source files)
+    - name: Deploy Report to gh-pages branch
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./stock_research_bot # Deploy the repository folder itself
-        enable_clone_depth: true
+        publish_dir: ./ # Publish the generated report from the root
         force_orphan: true
+        keep_files: true # Keep existing files on gh-pages branch if not overwritten
+        publish_branch: gh-pages # Deploy directly to the gh-pages branch
+        # Note: This action will commit report.json to gh-pages branch.
