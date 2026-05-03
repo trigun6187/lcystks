@@ -1,5 +1,6 @@
 import json
 
+# Static Data Export Script: Prints final research result to stdout when run directly.
 def get_research_data():
     # Research was performed by scrolling, then a final vision scan (which did not yield results) 
     # followed by a failed web_search fallback, leading to this derived failure state.
@@ -19,4 +20,5 @@ def get_research_data():
     }
 
 if __name__ == '__main__':
+    # When run as a script, print the structured result to stdout for packaging/piping.
     print(json.dumps(get_research_data(), indent=4))
