@@ -9,7 +9,8 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # <-- ADDED THIS LINE TO FORCE NODE 24
+      # Opt into Node 24 to avoid deprecation warnings causing issues
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
     steps:
     - name: Checkout code
@@ -20,24 +21,20 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies - FINAL FIX ATTEMPT
+    - name: Install dependencies
       run: |
-        # 1. Install core tools first, at the root level
-        pip install streamlit
+        # Install requirements for running the script locally in the runner
+        pip install -r stock_research_bot/requirements.txt
         
-        # 2. Install project dependencies
-        cd stock_research_bot
-        pip install -r requirements.txt
-        cd .. # Return to root
-        
-    - name: Build Static HTML Report - RETRY 3
+    - name: Generate Static HTML Report
       run: |
-        python -m streamlit build stock_research_bot/app.py --format html --output output/
+        # Run the python script directly to generate index.html in the project root.
+        python stock_research_bot/app.py
         
-    - name: Deploy to GitHub Pages
+    - name: Deploy Report to gh-pages branch
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./output 
-        enable_clone_depth: true
-        force_orphan: true
+        publish_dir: . # Publish everything from the root (should contain index.html)
+        force_orphan: true 
+        publish_branch: gh-pages 
