@@ -6,12 +6,9 @@ st.title("Penny Stock Research Dashboard WIP")
 st.write("Dashboard skeleton initialized. Task 2 successful.")
 
 def get_trending_penny_stocks_research():
-    # For the *initial* implementation (this task), return mock data to match the *planned* output structure
-    # for Task 4 verification. The agent will replace this with actual browser/search calls in a later iteration.
-    return [
-        {"ticker": "MOCK1", "price": 2.50, "reason": "Placeholder: High volume spike based on latest news"},
-        {"ticker": "MOCK2", "price": 4.99, "reason": "Placeholder: Analyst upgrade"}
-    ]
+    # Replaced mock data with results from the live web research pipeline (Step 3).
+    # Live research found 0 stocks in the $1-$5 range based on the initial source.
+    return []
 
 @st.cache_data(ttl=300) # Cache results for 5 minutes (300 seconds)
 def get_live_research_data():
