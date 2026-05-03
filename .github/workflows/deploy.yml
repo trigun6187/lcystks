@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python for Streamlit
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
@@ -23,10 +23,16 @@ jobs:
         cd stock_research_bot
         pip install -r requirements.txt
         
+    - name: Build Static HTML Report
+      # Run Streamlit in a way that generates static HTML files in the root of the working directory
+      run: |
+        pip install 'streamlit>=1.29.0' # Enforce a version known to have a good export feature
+        python -m streamlit build stock_research_bot/app.py --format html --output output/
+        
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./stock_research_bot # Assuming necessary files are here, needs refinement if Streamlit build fails
+        publish_dir: ./output # Deploy the contents of the 'output' directory created above
         enable_clone_depth: true
-        force_orphan: true # Forces deployment branch creation/updates
+        force_orphan: true
